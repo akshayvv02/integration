@@ -214,3 +214,230 @@ By re-generating the signature using header+payload and secret key, then compari
 ### 🔹 Q9: Can a JWT carry roles and custom claims?
 
 Yes. That’s one of its main advantages — it can include `"role": "admin"` or other data directly in the payload.
+
+Absolutely, Nikita! Let's cover **Refresh Tokens** concisely but completely — because they're a key part of **secure, scalable token-based authentication systems** like OAuth 2.0 + JWT.
+
+---
+
+## 🔁 **What is a Refresh Token?**
+
+A **Refresh Token** is a special token used to **obtain a new Access Token** **after the current one expires**, without forcing the user to log in again.
+
+---
+
+### 🧠 Why do we need it?
+
+* **Access Tokens (JWTs)** should be **short-lived** (e.g., 15 mins – 1 hour) for security.
+* If token is compromised, attacker gets only a short window.
+* But we don’t want to **ask user to log in again** every 15 minutes.
+
+➡️ So:
+**Access Token expires → use Refresh Token → get new Access Token silently**
+
+---
+
+## 🔑 **How it works (Flow)**
+
+1. **Login:**
+
+   * User logs in
+   * Server returns:
+
+     * `access_token` (JWT, expires in 15m)
+     * `refresh_token` (opaque or JWT, long-lived, e.g., 7 days)
+
+2. **Access Protected Resource:**
+
+   * Client sends `access_token` in `Authorization` header
+
+3. **When Access Token expires:**
+
+   * Client sends `refresh_token` to:
+
+     ```
+     POST /token/refresh
+     Body: { refresh_token: "<token>" }
+     ```
+   * Server verifies `refresh_token` and issues a new `access_token`
+
+---
+
+## 🔐 **Security Notes**
+
+* Refresh Tokens are **sensitive**:
+
+  * Long-lived
+  * Can be used to impersonate user
+* Should be:
+
+  * Stored **securely** (e.g., `HttpOnly` cookies in browser)
+  * Rotated (old token invalidated after use)
+  * Revocable (store in DB or blacklist)
+
+---
+
+## 🧾 **JWT + Refresh Token**
+
+| Token Type    | Lifespan           | Used For             | Format        |
+| ------------- | ------------------ | -------------------- | ------------- |
+| Access Token  | Short (15m – 1h)   | Auth API calls       | JWT           |
+| Refresh Token | Long (days/months) | Get new access token | JWT or opaque |
+
+---
+
+## ✅ Interview-ready Summary
+
+> 🔸**Q:** What is a refresh token?
+> 🔹A refresh token is used to get a new access token when the old one expires, without requiring the user to re-authenticate.
+
+> 🔸**Q:** Why not make access tokens long-lived?
+> 🔹Long-lived access tokens increase risk if compromised. Short tokens + refresh mechanism is more secure.
+
+> 🔸**Q:** Can JWT be used as a refresh token?
+> 🔹Yes, but often opaque tokens are used. JWT-based refresh tokens must be stored and revoked securely.
+
+---
+Great idea, Nikita! Let’s go step-by-step and **create a JWT manually from scratch** using a real-world example. This will solidify your understanding like nothing else 🔥
+
+---
+
+## 🎯 **Use Case:**
+
+> Let’s say a user named **Nikita Gill**, with ID `1234`, logs into a system, and we want to issue her a JWT that:
+>
+> * Identifies her (`sub`)
+> * Includes her **role** = `"admin"`
+> * Sets an **expiration** 15 minutes from now
+
+---
+
+## 🧱 STEP 1: **Create the Header**
+
+JWT header is a JSON object like:
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+Encode it using **Base64 URL-safe** (no `+`, `/`, `=`):
+
+Encoded:
+
+```text
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+```
+
+---
+
+## 🧾 STEP 2: **Create the Payload (claims)**
+
+Example payload:
+
+```json
+{
+  "sub": "1234",
+  "name": "Nikita Gill",
+  "role": "admin",
+  "iat": 1719060000,
+  "exp": 1719060900
+}
+```
+
+* `sub`: subject (user ID)
+* `iat`: issued at (Unix timestamp)
+* `exp`: expiration (15 min later)
+* `role`: custom claim
+
+Encoded:
+
+```text
+eyJzdWIiOiIxMjM0IiwibmFtZSI6Ik5pa2l0YSBHaWxsIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE5MDYwMDAwLCJleHAiOjE3MTkwNjA5MDB9
+```
+
+---
+
+## 🔐 STEP 3: **Create the Signature**
+
+Now we **sign** the header + payload using a **secret** and the algorithm `HS256`.
+
+Let’s use a **secret**:
+
+```
+mySuperSecretKey
+```
+
+Signature input:
+
+```
+<base64url(header)>.<base64url(payload)>
+```
+
+Which is:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0IiwibmFtZSI6Ik5pa2l0YSBHaWxsIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE5MDYwMDAwLCJleHAiOjE3MTkwNjA5MDB9
+```
+
+Now apply **HMACSHA256** with the secret key.
+
+> This will give a binary hash which is then base64url encoded to get the **signature**.
+
+Example (result may differ by tool):
+
+```text
+SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+```
+
+---
+
+## 🎉 STEP 4: **Final JWT**
+
+```
+<HEADER>.<PAYLOAD>.<SIGNATURE>
+```
+
+Result:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+eyJzdWIiOiIxMjM0IiwibmFtZSI6Ik5pa2l0YSBHaWxsIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE5MDYwMDAwLCJleHAiOjE3MTkwNjA5MDB9.
+SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+```
+
+> ✅ This token can now be passed in:
+
+```
+Authorization: Bearer <JWT>
+```
+
+---
+
+## 🛠 Tools You Can Use:
+
+* [jwt.io](https://jwt.io) – Encode/decode and validate tokens
+* In **Java**: Use `jjwt` or `java-jwt` libraries
+* In **Postman**: Add JWT manually to the header
+
+---
+
+## ✅ What You Just Learned:
+
+* Manually created a JWT from user info
+* Understood base64url encoding
+* Understood signature creation using secret
+* Created a full, valid JWT token!
+
+---
+
+Would you like to:
+
+* Code this in Java or Mulesoft now?
+* Try with **RS256** (asymmetric keys)?
+* Move on to next topic like **SSO**, **data pipelines**, or **deployment best practices**?
+
+Let’s keep going — you’re building serious momentum here 💪
+
+
