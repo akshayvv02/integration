@@ -159,3 +159,115 @@
 * **Jaeger/Zipkin** for distributed tracing
 * **Cloud-native tools** (CloudWatch, Azure Monitor)
 
+---
+
+## 📌 GIST: Scalability & Performance in Integration Design
+
+🔹 **Stateless Services**
+→ Enables horizontal scaling; store state in Redis, DB, etc.
+
+🔹 **Asynchronous Messaging**
+→ Use Kafka, RabbitMQ to avoid request overload.
+
+🔹 **Load Balancing**
+→ Distribute traffic using NGINX, API Gateway, or cloud load balancer.
+
+🔹 **Caching**
+→ Use Redis/in-memory cache; enable API response and HTTP caching.
+
+🔹 **Batch Processing (ETL)**
+→ Prefer micro-batching over row-by-row writes.
+
+🔹 **DB Optimization**
+→ Indexing, partitioning, pooling, bulk writes.
+
+🔹 **Circuit Breaker & Retry**
+→ Use Hystrix, Resilience4j to handle failures gracefully.
+
+🔹 **Rate Limiting**
+→ Prevent system abuse; enforce via API Gateway.
+
+🔹 **Monitoring & Observability**
+→ Use Prometheus + Grafana, ELK, CloudWatch, tracing tools.
+
+🔹 **API Optimizations**
+→ Pagination, gzip, selective fields, async processing.
+
+🔹 **Horizontal Scaling**
+→ Use containers & orchestrators (Docker, Kubernetes).
+
+---
+
+## 📌 GIST: Maintainability in Integration Design
+
+🔹 **Modular Architecture**
+→ Separate API, business logic, transformation, error handling.
+
+🔹 **Reusable Components**
+→ Common loggers, error handlers, mappers, etc.
+
+🔹 **External Configurations**
+→ Store configs in `.env`, `.yaml`, cloud secrets.
+
+🔹 **Clean Code & SOLID Principles**
+→ Meaningful names, no deep nesting, separation of concerns.
+
+🔹 **Structured Logging**
+→ Use trace IDs, log levels; centralize logs.
+
+🔹 **Proper Error Handling**
+→ Retry logic, dead-letter queues, alerts.
+
+🔹 **Versioning**
+→ Version APIs and data mapping logic to ensure backward compatibility.
+
+🔹 **Testing Strategy**
+→ Unit + Integration + Contract testing, synthetic data for ETL.
+
+🔹 **Documentation**
+→ Swagger, ETL mapping docs, deployment and sequence diagrams.
+
+🔹 **CI/CD & Code Reviews**
+→ Use pipelines for code quality, tests, deployment.
+
+---
+
+## 🎯 Interview Questions Recap
+
+### Scalability & Performance
+
+1. **How would you design a scalable API?**
+   → Stateless, async messaging, caching, retries, observability.
+
+2. **Techniques to scale ETL pipelines?**
+   → Parallelism, batching, partitioning, columnar formats.
+
+3. **Horizontal vs Vertical Scaling?**
+   → Horizontal = better for cloud-native and microservices.
+
+4. **How do circuit breakers help?**
+   → Prevent cascading failures, allow recovery.
+
+5. **Monitoring tools used?**
+   → Prometheus, ELK, Zipkin/Jaeger, CloudWatch.
+
+---
+
+### Maintainability
+
+1. **How do you ensure maintainability?**
+   → Modular design, reusable code, versioning, documentation.
+
+2. **What causes poor maintainability?**
+   → Hardcoding, tight coupling, missing docs, no versioning.
+
+3. **How do you test integrations?**
+   → Mocks, contract tests, synthetic ETL datasets.
+
+4. **Logging best practices?**
+   → Structured, centralized, trace IDs.
+
+5. **How do you handle requirement changes?**
+   → Versioning, feature toggles, abstraction layers.
+
+
