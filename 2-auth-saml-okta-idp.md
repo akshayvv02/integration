@@ -64,3 +64,10 @@
 * **Q5**: SSO real-world example?
   **A**: Google login for Gmail, YouTube, Drive from one sign-in
 
+  | Term          | Stands For                         | Purpose                                       | Used In                                            |
+| ------------- | ---------------------------------- | --------------------------------------------- | -------------------------------------------------- |
+| **OAuth 2.0** | Open Authorization                 | **Delegated access** to APIs (scopes, tokens) | **Mobile apps, APIs, cloud services**              |
+| **SAML 2.0**  | Security Assertion Markup Language | **Single Sign-On (SSO)** via browser          | **Web enterprise apps**                            |
+| **SSO**       | Single Sign-On                     | **Allow login once → access multiple apps**   | Implemented using **SAML**, **OAuth**, or **OIDC** |
+
+
